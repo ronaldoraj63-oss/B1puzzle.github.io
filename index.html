@@ -1,0 +1,105 @@
+{german:"stehen", english:"to stand"},
+{german:"steigen", english:"to climb"},
+{german:"stellen", english:"to place"},
+{german:"sterben", english:"to die"},
+{german:"studieren", english:"to study"},
+{german:"suchen", english:"to search"},
+{german:"tanzen", english:"to dance"},
+{german:"teilen", english:"to share"},
+{german:"tragen", english:"to carry"},
+{german:"treffen", english:"to meet"},
+{german:"trinken", english:"to drink"},
+{german:"tun", english:"to do"},
+{german:"vergessen", english:"to forget"},
+{german:"vergleichen", english:"to compare"},
+{german:"verlieren", english:"to lose"},
+{german:"verstehen", english:"to understand"},
+{german:"versuchen", english:"to try"},
+{german:"wachsen", english:"to grow"},
+{german:"warten", english:"to wait"},
+{german:"waschen", english:"to wash"},
+{german:"werden", english:"to become"},
+{german:"werfen", english:"to throw"},
+{german:"wissen", english:"to know"},
+{german:"wohnen", english:"to live"},
+{german:"wollen", english:"to want"},
+{german:"zeigen", english:"to show"},
+{german:"ziehen", english:"to pull"}
+];
+
+let level = 1;
+let score = 0;
+let selectedGerman = null;
+let matchedCount = 0;
+let levelWords = [];
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+
+function loadLevel(){
+matchedCount = 0;
+document.getElementById("message").innerText = "";
+document.getElementById("level").innerText = "Level: " + level;
+
+let start = (level-1)*10;
+levelWords = allWords.slice(start,start+10);
+
+let germanCol=document.getElementById("germanColumn");
+let englishCol=document.getElementById("englishColumn");
+germanCol.innerHTML=""; englishCol.innerHTML="";
+
+shuffle(levelWords).forEach(w=>{
+let d=document.createElement("div");
+d.className="word"; d.innerText=w.german;
+d.onclick=()=>selectGerman(w,d);
+germanCol.appendChild(d);
+});
+
+shuffle(levelWords).forEach(w=>{
+let d=document.createElement("div");
+d.className="word"; d.innerText=w.english;
+d.onclick=()=>checkMatch(w,d);
+englishCol.appendChild(d);
+});
+}
+
+function selectGerman(word,el){
+if(el.classList.contains("correct"))return;
+clearSelection();
+selectedGerman={word:word,element:el};
+el.classList.add("selected");
+}
+
+function checkMatch(word,el){
+if(!selectedGerman)return;
+if(selectedGerman.word.english===word.english){
+selectedGerman.element.classList.add("correct");
+el.classList.add("correct");
+score++; matchedCount++;
+if(matchedCount===10){
+document.getElementById("message").innerText="Level Completed!";
+}
+}else{
+el.classList.add("wrong");
+setTimeout(()=>el.classList.remove("wrong"),400);
+score--;
+}
+document.getElementById("score").innerText="Score: "+score;
+clearSelection(); selectedGerman=null;
+}
+
+function clearSelection(){
+document.querySelectorAll(".word").forEach(e=>e.classList.remove("selected"));
+}
+
+function nextLevel(){
+if(level<10){ level++; loadLevel(); }
+else{
+document.getElementById("message").innerText="🎉 All 100 Words Completed!";
+}
+}
+
+loadLevel();
+
+</script>
+</body>
+</html>
